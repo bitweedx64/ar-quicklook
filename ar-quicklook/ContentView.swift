@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AVFoundation
 
 extension View {
     @ViewBuilder func isHidden(_ isHidden: Bool) -> some View {
@@ -17,6 +18,18 @@ extension View {
     }
 }
 
+class CameraManager : ObservableObject {
+    @Published var permissionGranted = false
+    
+    func requestPermission() {
+        AVCaptureDevice.requestAccess(for: .video, completionHandler: {accessGranted in
+            DispatchQueue.main.async {
+                self.permissionGranted = accessGranted
+            }
+        })
+    }
+}
+
 struct ContentView: View {
     // State used to toggle showing our sheet containing AR QL preview
     @State var showingPreview = false
@@ -25,7 +38,9 @@ struct ContentView: View {
     @State var allowsScaling = false
     @State var url = ""
     @State var working = false
-    @State var location = URL(string: "https://abnernat-usdz.s3.ap-southeast-1.amazonaws.com/DownloadedScene.usdz")
+    @State var location = URL(string: "https://developer.apple.com/augmented-reality/quick-look/models/drummertoy/toy_drummer.usdz")
+    
+    @StateObject var cameraManager = CameraManager()
     
     var body: some View {
         VStack {
@@ -49,16 +64,21 @@ struct ContentView: View {
                     guard let fileURL = urlOrNil else { return }
                     do {
                         let documentsURL = try
-                            FileManager.default.url(for: .documentDirectory,
-                                                    in: .userDomainMask,
-                                                    appropriateFor: nil,
-                                                    create: false)
+                        FileManager.default.url(for: .documentDirectory,
+                                                   in: .userDomainMask,
+                                                   appropriateFor: nil,
+                                                   create: false)
                         let savedURL = documentsURL.appendingPathComponent("DownloadedScene.usdz")
+                        if FileManager.default.fileExists(atPath: savedURL.path) {
+                            try FileManager.default.removeItem(at: savedURL)
+                        }
+                        
                         try FileManager.default.moveItem(at: fileURL, to: savedURL)
-                        self.showingPreview.toggle()
-                        location = savedURL
                         print(savedURL)
+                        location = savedURL
                         working = false
+                        //                        print(try FileManager.default.attributesOfItem(atPath: savedURL.path))
+                        self.showingPreview.toggle()
                     } catch {
                         print ("file error: \(error)")
                     }
@@ -66,33 +86,60 @@ struct ContentView: View {
                 downloadTask.resume()
             }
             .disabled(working)
+            .fullScreenCover(isPresented: $showingPreview, content: {
+                ZStack {
+                    VStack {
+                        // Top row: button, aligned left
+                        HStack {
+                            Button("Close") {
+                                // Toggle the preview display off again.
+                                // Swiping down (the system gesture to dismiss a sheet)
+                                // will cause SwiftUI to toggle our state property as well.
+                                self.showingPreview.toggle()
+                            }
+                            // The spacer fills the space following the button, in effect
+                            // pushing the button to the leading edge of the view.
+                            Spacer()
+                        }
+                        .padding()
+                        
+                        // Quick-look view goes here
+                        ARQuickLookView(url: location!, allowScaling: self.allowsScaling)
+                            .edgesIgnoringSafeArea(.all)
+                    }
+                }
+            })
             // This modifier tells SwiftUI to present a view in a modal sheet
             // when a state variable is set to true, and to dismiss it
             // when set to false.
-            .sheet(isPresented: $showingPreview) {
-                // Sheet content: the quick look view with a header bar containing
-                // a simple 'close' button that closes the sheet.
-                VStack {
-                    // Top row: button, aligned left
-                    HStack {
-                        Button("Close") {
-                            // Toggle the preview display off again.
-                            // Swiping down (the system gesture to dismiss a sheet)
-                            // will cause SwiftUI to toggle our state property as well.
-                            self.showingPreview.toggle()
-                        }
-                        // The spacer fills the space following the button, in effect
-                        // pushing the button to the leading edge of the view.
-                        Spacer()
-                    }
-                    .padding()
-                    
-                    // Quick-look view goes here
-                    ARQuickLookView(name: "DownloadedScene", allowScaling: self.allowsScaling)
-                }
-            }
+            //            .sheet(isPresented: $showingPreview) {
+            //                // Sheet content: the quick look view with a header bar containing
+            //                // a simple 'close' button that closes the sheet.
+            //                VStack {
+            //                    // Top row: button, aligned left
+            //                    HStack {
+            //                        Button("Close") {
+            //                            // Toggle the preview display off again.
+            //                            // Swiping down (the system gesture to dismiss a sheet)
+            //                            // will cause SwiftUI to toggle our state property as well.
+            //                            self.showingPreview.toggle()
+            //                        }
+            //                        // The spacer fills the space following the button, in effect
+            //                        // pushing the button to the leading edge of the view.
+            //                        Spacer()
+            //                    }
+            //                    .padding()
+            //
+            //                    // Quick-look view goes here
+            //                    ARQuickLookView(url: location!, allowScaling: self.allowsScaling)
+            //                        .edgesIgnoringSafeArea(.all)
+            //                }
+            //            }
         }
         .padding(20)
+        .onAppear {
+            cameraManager.requestPermission()
+        }
     }
 }
 

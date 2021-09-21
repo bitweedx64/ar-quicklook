@@ -12,7 +12,7 @@ import ARKit
 struct ARQuickLookView: UIViewControllerRepresentable {
     // Properties: the file name (without extension), and whether we'll let
     // the user scale the preview content.
-    var name: String
+    var url: URL
     var allowScaling: Bool = true
     
     func makeCoordinator() -> ARQuickLookView.Coordinator {
@@ -36,8 +36,7 @@ struct ARQuickLookView: UIViewControllerRepresentable {
     
     class Coordinator: NSObject, QLPreviewControllerDataSource {
         let parent: ARQuickLookView
-        private lazy var fileURL: URL = Bundle.main.url(forResource: parent.name,
-                                                        withExtension: "reality")!
+        private lazy var fileURL: URL = parent.url
         
         init(_ parent: ARQuickLookView) {
             self.parent = parent
@@ -55,11 +54,10 @@ struct ARQuickLookView: UIViewControllerRepresentable {
             _ controller: QLPreviewController,
             previewItemAt index: Int
         ) -> QLPreviewItem {
-            guard let fileURL = Bundle.main.url(forResource: parent.name, withExtension: "usdz") else {
-                fatalError("Unable to load \(parent.name).reality from main bundle")
-            }
-            
+            let fileURL = parent.url
+            print(fileURL)
             let item = ARQuickLookPreviewItem(fileAt: fileURL)
+            item.canonicalWebPageURL = URL(string: "https://developer.apple.com/augmented-reality/quick-look/models/drummertoy/")
             item.allowsContentScaling = parent.allowScaling
             return item
         }
@@ -68,6 +66,7 @@ struct ARQuickLookView: UIViewControllerRepresentable {
 
 struct ARQuickLookView_Previews: PreviewProvider {
     static var previews: some View {
-        ARQuickLookView(name: "DownloadedScene")
+        ARQuickLookView(url: URL(string: "https://abnernat-usdz.s3.ap-southeast-1.amazonaws.com/DownloadedScene.usdz")!)
     }
 }
+

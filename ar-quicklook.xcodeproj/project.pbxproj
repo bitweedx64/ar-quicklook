@@ -12,7 +12,6 @@
 		85BE9BAD26F9A0B100AF2636 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 85BE9BAC26F9A0B100AF2636 /* Assets.xcassets */; };
 		85BE9BB026F9A0B100AF2636 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 85BE9BAF26F9A0B100AF2636 /* Preview Assets.xcassets */; };
 		85BE9BBA26F9A18500AF2636 /* ARQuickLookView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85BE9BB926F9A18500AF2636 /* ARQuickLookView.swift */; };
-		85BE9BBC26F9BBF400AF2636 /* DownloadedScene.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 85BE9BBB26F9BBF400AF2636 /* DownloadedScene.usdz */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,7 +22,6 @@
 		85BE9BAF26F9A0B100AF2636 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		85BE9BB126F9A0B100AF2636 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		85BE9BB926F9A18500AF2636 /* ARQuickLookView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARQuickLookView.swift; sourceTree = "<group>"; };
-		85BE9BBB26F9BBF400AF2636 /* DownloadedScene.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = DownloadedScene.usdz; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,7 +56,6 @@
 			children = (
 				85BE9BA826F9A0AF00AF2636 /* ar_quicklookApp.swift */,
 				85BE9BAA26F9A0AF00AF2636 /* ContentView.swift */,
-				85BE9BBB26F9BBF400AF2636 /* DownloadedScene.usdz */,
 				85BE9BB926F9A18500AF2636 /* ARQuickLookView.swift */,
 				85BE9BAC26F9A0B100AF2636 /* Assets.xcassets */,
 				85BE9BB126F9A0B100AF2636 /* Info.plist */,
@@ -132,7 +129,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				85BE9BBC26F9BBF400AF2636 /* DownloadedScene.usdz in Resources */,
 				85BE9BB026F9A0B100AF2636 /* Preview Assets.xcassets in Resources */,
 				85BE9BAD26F9A0B100AF2636 /* Assets.xcassets in Resources */,
 			);
